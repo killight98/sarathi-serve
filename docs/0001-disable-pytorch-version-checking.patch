@@ -1,0 +1,37 @@
+From 7e8a8ccd799ef783a6992018d19af90493ef3969 Mon Sep 17 00:00:00 2001
+From: "xiaochuan.luo" <luoxiaoc@ortce-skl21.jf.intel.com>
+Date: Tue, 29 Oct 2024 03:22:36 -0700
+Subject: [PATCH] disable pytorch version checking
+
+Signed-off-by: luoxiaoc <xiaochuan.luo@intel.com>
+---
+ python/flashinfer/utils.py | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/python/flashinfer/utils.py b/python/flashinfer/utils.py
+index 40ad522..010b40b 100644
+--- a/python/flashinfer/utils.py
++++ b/python/flashinfer/utils.py
+@@ -211,8 +211,8 @@ def register_custom_op(
+     device_types: Optional[Union[str, Sequence[str]]] = None,
+     schema: Optional[str] = None,
+ ) -> Callable:
+-    if TorchVersion(torch_version) < TorchVersion("2.4"):
+-        return fn
++    #if TorchVersion(torch_version) < TorchVersion("2.4"):
++    #    return fn
+     return torch.library.custom_op(
+         name, fn, mutates_args=mutates_args, device_types=device_types, schema=schema
+     )
+@@ -222,6 +222,6 @@ def register_fake_op(
+     name: str,
+     fn: Optional[Callable] = None,
+ ) -> Callable:
+-    if TorchVersion(torch_version) < TorchVersion("2.4"):
+-        return fn
++    #if TorchVersion(torch_version) < TorchVersion("2.4"):
++    #    return fn
+     return torch.library.register_fake(name, fn)
+-- 
+2.43.0
+

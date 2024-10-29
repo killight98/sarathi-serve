@@ -170,7 +170,6 @@ setuptools.setup(
     ],
     packages=setuptools.find_packages(exclude=("benchmarks", "csrc")),
     python_requires=">=3.10",
-    install_requires=get_requirements(),
     ext_modules=ext_modules,
     cmdclass={"build_ext": BuildExtension},
 )
