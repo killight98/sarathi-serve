@@ -23,7 +23,7 @@ def release_resources_on_failure(func):
         try:
             return func(self, *args, **kwargs)
         except Exception as e:
-            logger.error(f"Error in search: {e}", flush=True)
+            logger.error(f"Error in search: {e}")
             self.release_resources()
 
     return wrapper

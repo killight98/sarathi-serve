@@ -221,6 +221,14 @@ class BaseWorker:
         )
 
     @synchronized
+    def stop_worker(self):
+        pass
+
+    @synchronized
+    def exit(self):
+        pass
+
+    @synchronized
     def stop_profiling(self) -> None:
         self.profiler.__exit__(None, None, None)
         self.profiler.export_chrome_trace(

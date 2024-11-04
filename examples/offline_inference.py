@@ -24,9 +24,9 @@ sampling_params = SamplingParams(temperature=0.8, top_p=0.95, max_tokens=100)
 output_dir = f"{BASE_OUTPUT_DIR}/{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}"
 
 llm_engine = LLMEngine.from_engine_args(
-    model="meta-llama/Llama-2-7b-hf",
+    model="mistralai/Mistral-7B-Instruct-v0.2",
     # parallel config
-    tensor_parallel_size=4,
+    tensor_parallel_size=1,
     pipeline_parallel_size=2,
     trust_remote_code=True,
     max_model_len=4096,
@@ -51,7 +51,6 @@ def generate(
 
     num_requests = llm_engine.get_num_unfinished_requests()
     pbar = tqdm(total=num_requests, desc="Processed prompts")
-
     # Run the engine
     outputs: List[RequestOutput] = []
     while llm_engine.has_unfinished_requests():
@@ -80,3 +79,4 @@ for output in outputs:
     print("-----------------------------------------------------------")
     print(f"Generated text: {generated_text!r}")
     print("===========================================================")
+llm_engine.exit()

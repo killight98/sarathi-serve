@@ -1,9 +1,10 @@
 """A GPU worker class."""
-
 from queue import Queue
 from threading import Thread
 from typing import Optional, Tuple
 
+import time
+import ray
 import torch
 import torch.distributed
 
@@ -55,6 +56,7 @@ class PipelineParallelWorker(BaseWorker):
         self.execution_queue = Queue()
         self.output_queue = Queue()
         self.execution_thread = Thread(target=self._execution_loop, daemon=True)
+        self._stop = False
 
     def _verify_parallel_config(self) -> None:
         assert self.parallel_config.pipeline_parallel_size > 1
@@ -82,12 +84,21 @@ class PipelineParallelWorker(BaseWorker):
     ) -> None:
         self.seq_manager.on_step_completed(scheduler_outputs, sampler_outputs)
 
-    @exit_on_error
+    @synchronized
+    def stop_worker(self):
+        self._stop = True
+
+    # @exit_on_error
     def _execution_loop(self) -> None:
         torch.cuda.set_device(self.device)
 
-        while True:
-            scheduler_outputs = self.execution_queue.get()
+        while not self._stop:
+            try:
+                scheduler_outputs = self.execution_queue.get(block=False)
+            except Exception:
+                time.sleep(0.1)
+                continue
+
             output = self.execute_model(scheduler_outputs)
 
             if not self.is_tensor_parallel_rank_zero:
@@ -95,6 +106,12 @@ class PipelineParallelWorker(BaseWorker):
 
             if self.is_first_pipeline_stage or self.is_last_pipeline_stage:
                 self.output_queue.put(output)
+
+    @synchronized
+    def exit(self):
+        if self.execution_thread.is_alive():
+            self.execution_thread.join()
+        ray.actor.exit_actor()
 
     def get_output(self) -> Optional[SamplerOutputs]:
         return self.output_queue.get()
