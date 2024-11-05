@@ -200,12 +200,12 @@ class BaseWorker:
     def reset_metrics(self) -> None:
         self.metrics_store.reset()
 
-    @synchronized
+    # @synchronized
     def start_profiling(self) -> None:
         self.profiler = torch.profiler.profile(
             activities=[
                 torch.profiler.ProfilerActivity.CPU,
-                torch.profiler.ProfilerActivity.CUDA,
+                # torch.profiler.ProfilerActivity.CUDA,
             ],
         )
         self.profiler.__enter__()
@@ -225,14 +225,18 @@ class BaseWorker:
         pass
 
     @synchronized
-    def exit(self):
+    def wait_worker(self):
         pass
 
     @synchronized
+    def exit(self):
+        pass
+
+    # @synchronized
     def stop_profiling(self) -> None:
         self.profiler.__exit__(None, None, None)
         self.profiler.export_chrome_trace(
-            f"{self.metrics_config.output_dir}/profiler_trace_rank_{self.rank}.json"
+            f"torchshim_{os.uname()[1]}_{os.getpid()}_0.json"
         )
 
 

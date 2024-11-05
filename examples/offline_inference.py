@@ -35,9 +35,10 @@ llm_engine = LLMEngine.from_engine_args(
     chunk_size=100,
     max_num_seqs=4,
     # metrics config
-    write_metrics=False,
+    write_metrics=True,
     output_dir=output_dir,
     enable_chrome_trace=True,
+    enable_profiler=True
 )
 
 

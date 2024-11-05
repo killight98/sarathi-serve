@@ -91,7 +91,8 @@ class PipelineParallelWorker(BaseWorker):
     # @exit_on_error
     def _execution_loop(self) -> None:
         torch.cuda.set_device(self.device)
-
+        if self.metrics_config.enable_profiler:
+            self.start_profiling()
         while not self._stop:
             try:
                 scheduler_outputs = self.execution_queue.get(block=False)
@@ -106,11 +107,16 @@ class PipelineParallelWorker(BaseWorker):
 
             if self.is_first_pipeline_stage or self.is_last_pipeline_stage:
                 self.output_queue.put(output)
+        if self.metrics_config.enable_profiler:
+            self.stop_profiling()
+
+    @synchronized
+    def wait_worker(self):
+        if self.execution_thread.is_alive():
+            self.execution_thread.join()
 
     @synchronized
     def exit(self):
-        if self.execution_thread.is_alive():
-            self.execution_thread.join()
         ray.actor.exit_actor()
 
     def get_output(self) -> Optional[SamplerOutputs]:

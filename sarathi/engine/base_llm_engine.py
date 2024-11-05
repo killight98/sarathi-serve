@@ -469,6 +469,7 @@ class BaseLLMEngine:
 
     def exit(self):
         self._run_workers("stop_worker")
+        self._run_workers("wait_worker")
         self._run_workers("exit", ignore_output=True)
 
     def get_metric_store(self) -> MetricsStore:

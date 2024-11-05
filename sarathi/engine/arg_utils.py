@@ -68,6 +68,7 @@ class EngineArgs:
     enable_request_outputs: bool = False
     keep_individual_batch_metrics: bool = False
     attention_backend: str = "flash_attention"
+    enable_profiler: bool = False
 
     def __post_init__(self):
         if self.tokenizer is None:
@@ -168,6 +169,7 @@ class EngineArgs:
             enable_request_outputs=self.enable_request_outputs,
             keep_individual_batch_metrics=self.keep_individual_batch_metrics,
             model_num_layers=model_config.get_total_num_layers(),
+            enable_profiler=self.enable_profiler,
         )
         return (
             model_config,

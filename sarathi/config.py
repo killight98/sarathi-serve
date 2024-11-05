@@ -404,6 +404,7 @@ class MetricsConfig:
         enable_request_outputs: bool,
         keep_individual_batch_metrics: bool,
         model_num_layers: int,
+        enable_profiler: bool
     ) -> None:
         self.replica_id = replica_id
         self.write_metrics = write_metrics
@@ -419,6 +420,7 @@ class MetricsConfig:
         self.enable_request_outputs = enable_request_outputs
         self.keep_individual_batch_metrics = keep_individual_batch_metrics
         self.model_num_layers = model_num_layers
+        self.enable_profiler = enable_profiler
 
     def __str__(self) -> str:
         return (
@@ -433,7 +435,8 @@ class MetricsConfig:
             f"enable_chrome_trace={self.enable_chrome_trace}, "
             f"enable_request_outputs={self.enable_request_outputs}, "
             f"keep_individual_batch_metrics="
-            f"{self.keep_individual_batch_metrics})"
+            f"{self.keep_individual_batch_metrics}), "
+            f"enable_profiler={self.enable_profiler}"
         )
 
 
