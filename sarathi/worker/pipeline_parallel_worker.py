@@ -97,7 +97,7 @@ class PipelineParallelWorker(BaseWorker):
             try:
                 scheduler_outputs = self.execution_queue.get(block=False)
             except Exception:
-                time.sleep(0.1)
+                time.sleep(0.001)
                 continue
 
             output = self.execute_model(scheduler_outputs)
