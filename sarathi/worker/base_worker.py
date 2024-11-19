@@ -3,7 +3,7 @@
 import os
 import time
 from typing import Optional, Tuple
-
+import ray
 import torch
 import torch.distributed
 
@@ -230,7 +230,7 @@ class BaseWorker:
 
     @synchronized
     def exit(self):
-        pass
+        ray.actor.exit_actor()
 
     # @synchronized
     def stop_profiling(self) -> None:

@@ -4,7 +4,6 @@ from threading import Thread
 from typing import Optional, Tuple
 
 import time
-import ray
 import torch
 import torch.distributed
 
@@ -114,10 +113,6 @@ class PipelineParallelWorker(BaseWorker):
     def wait_worker(self):
         if self.execution_thread.is_alive():
             self.execution_thread.join()
-
-    @synchronized
-    def exit(self):
-        ray.actor.exit_actor()
 
     def get_output(self) -> Optional[SamplerOutputs]:
         return self.output_queue.get()
